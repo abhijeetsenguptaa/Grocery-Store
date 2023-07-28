@@ -17,6 +17,8 @@ This API uses JSON Web Tokens (JWT) for authentication. In order to access prote
 
 ### Endpoints
 
+## User Routes
+
 #### Register a New User
 
 - Method: POST
@@ -266,6 +268,8 @@ This API uses JSON Web Tokens (JWT) for authentication. In order to access prote
   }
   ```
 
+## Product Routes
+
 #### Create a New Product
 
 - Method: POST
@@ -439,6 +443,189 @@ This API uses JSON Web Tokens (JWT) for authentication. In order to access prote
   ```json
   {
     "error": "Failed to fetch products."
+  }
+  ```
+
+Sure! Here's the documentation for the Grocery Store API - Cart Routes:
+
+## Cart Routes
+
+### Add Product to Cart
+
+- Method: POST
+- URL: `/cart`
+- Description: Add a product to the user's cart.
+
+**Request Body:**
+
+| Field       | Type     | Description                              |
+| ----------- | -------- | ---------------------------------------- |
+| productID   | Number   | The ID of the product to add to the cart.|
+| quantity    | Number   | The quantity of the product to add.      |
+| amount      | Number   | The individual item amount.              |
+| subtotal    | Number   | The total amount for the product(s).     |
+
+**Responses:**
+
+- 201 (Created):
+  ```json
+  {
+    "message": "Item added to the cart successfully",
+    "data": {
+      "id": "cart_item_id",
+      "userID": "user_id",
+      "productID": "product_id",
+      "quantity": 2,
+      "amount": 10.99,
+      "subtotal": 21.98
+    }
+  }
+  ```
+- 400 (Bad Request):
+  ```json
+  {
+    "error": "Please provide all required fields."
+  }
+  ```
+- 401 (Unauthorized):
+  ```json
+  {
+    "error": "No token provided"
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to add item to cart"
+  }
+  ```
+
+### Fetch Cart Details
+
+- Method: GET
+- URL: `/cart`
+- Description: Get details of the user's cart.
+
+**Responses:**
+
+- 200 (OK):
+  ```json
+  {
+    "cartDetails": [
+      {
+        "id": "cart_item_id",
+        "userID": "user_id",
+        "productID": "product_id",
+        "quantity": 2,
+        "amount": 10.99,
+        "subtotal": 21.98
+      },
+      // More cart items
+    ]
+  }
+  ```
+- 401 (Unauthorized):
+  ```json
+  {
+    "error": "No token provided"
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to fetch cart details"
+  }
+  ```
+
+### Update Cart Details
+
+- Method: PATCH
+- URL: `/cart/:id`
+- Description: Update details of a product in the user's cart.
+
+**Request Params:**
+
+| Field       | Type     | Description                              |
+| ----------- | -------- | ---------------------------------------- |
+| id          | Number   | The ID of the cart item to update.       |
+
+**Request Body:**
+
+| Field       | Type     | Description                              |
+| ----------- | -------- | ---------------------------------------- |
+| quantity    | Number   | The updated quantity of the product.     |
+| amount      | Number   | The updated individual item amount.      |
+| subtotal    | Number   | The updated total amount for the product(s). |
+
+**Responses:**
+
+- 200 (OK):
+  ```json
+  {
+    "message": "Cart item updated successfully"
+  }
+  ```
+- 400 (Bad Request):
+  ```json
+  {
+    "error": "Please provide all required fields."
+  }
+  ```
+- 404 (Not Found):
+  ```json
+  {
+    "error": "Cart item not found"
+  }
+  ```
+- 401 (Unauthorized):
+  ```json
+  {
+    "error": "No token provided"
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to update cart item"
+  }
+  ```
+
+### Delete Item from Cart
+
+- Method: DELETE
+- URL: `/cart/:id`
+- Description: Delete a product from the user's cart.
+
+**Request Params:**
+
+| Field       | Type     | Description                              |
+| ----------- | -------- | ---------------------------------------- |
+| id          | Number   | The ID of the cart item to delete.       |
+
+**Responses:**
+
+- 200 (OK):
+  ```json
+  {
+    "message": "Cart item deleted successfully"
+  }
+  ```
+- 404 (Not Found):
+  ```json
+  {
+    "error": "Cart item not found"
+  }
+  ```
+- 401 (Unauthorized):
+  ```json
+  {
+    "error": "No token provided"
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to delete cart item"
   }
   ```
 
