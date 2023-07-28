@@ -4,6 +4,7 @@ const cors = require('cors');
 const { connection } = require('./configs/connection');
 const { userRoute } = require('./routes/user.route');
 const { productRoute } = require('./routes/product.route');
+const { cartRoute } = require('./routes/cart.route');
 
 
 
@@ -33,6 +34,7 @@ app.get('/', async (req, res) => {
 
 app.use('/users', userRoute)
 app.use('/products', productRoute)
+app.use('/cart', cartRoute)
 
 
 
