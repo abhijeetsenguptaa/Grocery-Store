@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const { createUserTable } = require('../models/user.model');
 const { createProductTable } = require('../models/product.model');
 const { createCartTable } = require('../models/cart.model');
+const { createOrderTable } = require('../models/order.model');
 
 const DATABASE_URL = `mysql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@aws.connect.psdb.cloud/grocerystore`;
 
@@ -38,10 +39,18 @@ connection.query(createCartTable, (err) => {
     }
 })
 
+connection.query(createOrderTable, (err)=>{
+    if (err) {
+        console.log('Error creating order table:', err.message);
+    } else {
+        console.log('Order table created successfully')
+    }
+})
+
 
 // Drop the users table if it exists
 // const dropUsersTable = `
-//   DROP TABLE IF EXISTS cart
+//   DROP TABLE IF EXISTS single_order
 // `;
 
 // connection.query(dropUsersTable, (err) => {
