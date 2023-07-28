@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { connection } = require('./configs/connection');
 const { userRoute } = require('./routes/user.route');
+const { productRoute } = require('./routes/product.route');
 
 
 
@@ -31,6 +32,7 @@ app.get('/', async (req, res) => {
 
 
 app.use('/users', userRoute)
+app.use('/products', productRoute)
 
 
 
