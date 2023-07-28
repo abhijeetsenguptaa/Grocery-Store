@@ -629,6 +629,165 @@ Sure! Here's the documentation for the Grocery Store API - Cart Routes:
   }
   ```
 
+## Order Routes
+
+#### Create a New Order
+
+- Method: POST
+- URL: `/order`
+- Description: Create a new order for the authenticated user.
+
+**Request Body:**
+
+| Field           | Type     | Description                              |
+| --------------- | -------- | ---------------------------------------- |
+| paymentMethod   | String   | The payment method for the order.       |
+| paymentStatus   | String   | The payment status for the order.       |
+| orderStatus     | String   | The order status.                        |
+| totalAmount     | Number   | The total amount for the order.         |
+| products        | JSON     | An array of products for the order.     |
+
+**Responses:**
+
+- 201 (Created):
+  ```json
+  {
+    "id": "order_id",
+    "userID": "user_id",
+    "paymentMethod": "credit_card",
+    "paymentStatus": "paid",
+    "orderStatus": "processing",
+    "totalAmount": 50.99,
+    "products": [
+      {
+        "productID": "product_id_1",
+        "quantity": 2,
+        "amount": 15.99,
+        "subtotal": 31.98
+      },
+      {
+        "productID": "product_id_2",
+        "quantity": 1,
+        "amount": 19.99,
+        "subtotal": 19.99
+      }
+    ],
+    "createdAt": "2023-07-30T12:34:56.000Z",
+    "updatedAt": "2023-07-30T12:34:56.000Z"
+  }
+  ```
+- 400 (Bad Request):
+  ```json
+  {
+    "error": "Please provide all required fields."
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to create the order."
+  }
+  ```
+
+#### Fetch Orders
+
+- Method: GET
+- URL: `/order`
+- Description: Fetch all orders for the authenticated user. If the `id` parameter is provided, it will fetch a single order.
+
+**Query Parameters:**
+
+| Parameter | Type   | Description                   |
+| --------- | ------ | ----------------------------- |
+| id        | String | Optional. The ID of the order |
+
+**Responses:**
+
+- 200 (OK):
+  ```json
+  [
+    {
+      "id": "order_id_1",
+      "userID": "user_id",
+      "paymentMethod": "credit_card",
+      "paymentStatus": "paid",
+      "orderStatus": "processing",
+      "totalAmount": 50.99,
+      "products": [
+        {
+          "productID": "product_id_1",
+          "quantity": 2,
+          "amount": 15.99,
+          "subtotal": 31.98
+        },
+        {
+          "productID": "product_id_2",
+          "quantity": 1,
+          "amount": 19.99,
+          "subtotal": 19.99
+        }
+      ],
+      "createdAt": "2023-07-30T12:34:56.000Z",
+      "updatedAt": "2023-07-30T12:34:56.000Z"
+    },
+    // More order objects
+  ]
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to fetch orders."
+  }
+  ```
+
+#### Cancel an Order
+
+- Method: PATCH
+- URL: `/order/:id/cancel`
+- Description: Cancel an existing order for the authenticated user.
+
+**URL Parameters:**
+
+| Parameter | Type   | Description           |
+| --------- | ------ | --------------------- |
+| id        | String | The ID of the order.  |
+
+**Responses:**
+
+- 200 (OK):
+  ```json
+  {
+    "message": "Order cancelled successfully."
+  }
+  ```
+- 404 (Not Found):
+  ```json
+  {
+    "error": "Order not found."
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Failed to cancel the order."
+  }
+  ```
+
+### Error Responses
+
+- 401 (Unauthorized):
+  ```json
+  {
+    "error": "Unauthorized. Please provide a valid token."
+  }
+  ```
+- 500 (Internal Server Error):
+  ```json
+  {
+    "error": "Internal server error. Please try again later."
+  }
+  ```
+
 ---
 
 
