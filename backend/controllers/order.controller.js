@@ -13,6 +13,9 @@ async function createOrder(req, res) {
         const insertQuery = 'INSERT INTO orders (userID, paymentMethod, paymentStatus, orderStatus, totalAmount, products) VALUES (?, ?, ?, ?, ?, ?)';
         const [result] = await connection.promise().query(insertQuery, [userID, paymentMethod, paymentStatus, orderStatus, totalAmount, JSON.stringify(products)]);
 
+        const query = `DELETE FROM cart WHERE userID = ${userID}`;
+        await connection.promise().query(query, [userID]);
+
         res.status(201).json({
             message: 'Order created successfully',
             data: {
