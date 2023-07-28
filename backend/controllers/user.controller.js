@@ -5,7 +5,10 @@ const jwt = require("jsonwebtoken");
 
 // Function for registering the new User
 async function registeringNewUser(req, res) {
-    const { firstName, lastName, email, password, age, gender } = req.body;
+    const { firstName, lastName, email, password, age, gender, role } = req.body;
+
+    // If role is not provided in the request body, set it to "customer" by default
+    const userRole = role || 'customer';
 
     if (!firstName || !lastName || !age || !gender || !email || !password) {
         return res
@@ -17,44 +20,56 @@ async function registeringNewUser(req, res) {
     }
 
     try {
-        // Hash the password using bcrypt
-        bcrypt.hash(password, 10, async (err, hash) => {
-            if (err) {
-                res.status(500).json({
-                    status: false,
-                    msg: "Error in hashing the password",
-                });
-            } else {
-                try {
-                    // Insert the new user into the database
-                    const query =
-                        "INSERT INTO users (firstName, lastName, email, password, age, gender) VALUES (?, ?, ?, ?, ?, ?)";
-                    const [result] = await connection
-                        .promise()
-                        .query(query, [firstName, lastName, email, hash, age, gender]);
+        // Checking if the user-email is already registered
+        const query = `SELECT * FROM users WHERE email = ?`;
+        const [row] = await connection.promise().query(query, [email]);
 
-                    res
-                        .status(201)
-                        .json({
-                            id: result.insertId,
-                            firstName,
-                            lastName,
-                            email,
-                            age,
-                            gender,
-                            role: "customer",
-                        });
-                } catch (err) {
-                    console.error("Error while creating a new user:", err);
-                    res.status(500).json({ error: "Failed to create a new user" });
+        if (row.length >= 1) {
+            return res.status(409).json({
+                status: false,
+                msg: 'User already Registered'
+            });
+        } else {
+            // Hash the password using bcrypt
+            bcrypt.hash(password, 10, async (err, hash) => {
+                if (err) {
+                    return res.status(500).json({
+                        status: false,
+                        msg: "Error in hashing the password",
+                    });
+                } else {
+                    try {
+                        // Insert the new user into the database
+                        const insertQuery =
+                            "INSERT INTO users (firstName, lastName, email, password, age, gender, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        const [result] = await connection
+                            .promise()
+                            .query(insertQuery, [firstName, lastName, email, hash, age, gender, userRole]);
+
+                        res
+                            .status(201)
+                            .json({
+                                id: result.insertId,
+                                firstName,
+                                lastName,
+                                email,
+                                age,
+                                gender,
+                                role
+                            });
+                    } catch (err) {
+                        console.error("Error while creating a new user:", err);
+                        res.status(500).json({ error: "Failed to create a new user" });
+                    }
                 }
-            }
-        });
+            });
+        }
     } catch (err) {
-        console.error("Error while hashing the password:", err);
-        res.status(500).json({ error: "Failed to hash the password" });
+        console.error("Error while checking user email:", err);
+        res.status(500).json({ error: "Failed to check user email" });
     }
 }
+
 
 // Function for login the user
 async function loggingUser(req, res) {
